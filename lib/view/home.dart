@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sms/flutter_sms.dart';
+import 'package:background_sms/background_sms.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,15 +14,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     String message = "This is a sample distress message from Kaustubh";
 
-    List<String> recipents = ["9922450488", "8080223251"];
+    List<String> recipents = [
+      "9922450488",
+      "9767030005",
+      "8080223251",
+      "9405912557"
+    ];
 
-    void _sendSMS(String message, List<String> recipents) async {
-      String _result = await sendSMS(message: message, recipients: recipents)
-          .catchError((onError) {
-        return onError.toString();
-      });
-      print(_result);
-    }
+    // Future smsFunction({required message, required number}) async {
+    //   SmsStatus response = await BackgroundSms.sendMessage(
+    //       phoneNumber: number, message: message);
+    //   return response;
+    // }
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -31,8 +35,31 @@ class _HomePageState extends State<HomePage> {
               color: Colors.red,
               child: InkWell(
                   splashColor: Colors.white,
-                  onTap: () {
-                    _sendSMS(message, recipents);
+                  onTap: () async {
+                    if (await Permission.sms.isGranted) {
+                      //smsFunction(message: message, number: recipents);
+                      SmsStatus result = await BackgroundSms.sendMessage(
+                          phoneNumber: recipents[2], message: message);
+                      if (result == SmsStatus.sent) {
+                        print('object send');
+                      } else {
+                        print('error');
+                      }
+                    } else {
+                      final status = await Permission.sms.request();
+                      if (status.isGranted) {
+                        //smsFunction(message: message, number: recipents);
+                        SmsStatus result = await BackgroundSms.sendMessage(
+                            phoneNumber: recipents[1], message: message);
+                        if (result == SmsStatus.sent) {
+                          print('object send');
+                        } else {
+                          print('error');
+                        }
+                      }
+                    }
+                    // smsFunction(message: message, number: recipents);
+                    print('object send');
                   },
                   child: const SizedBox(
                     width: 200,
