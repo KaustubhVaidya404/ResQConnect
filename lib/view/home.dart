@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:background_sms/background_sms.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:res_q_connect/utilities/fetch_location.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,7 +14,26 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    String message = "This is a sample distress message from Kaustubh";
+    Position? currentPosition;
+
+    Future getCurrentLocation() async {
+      final hasPermission = await Permission.location.isGranted;
+      if (!hasPermission) {
+        await Geolocator.getCurrentPosition(
+                desiredAccuracy: LocationAccuracy.best)
+            .then((Position position) {
+          setState(() {
+            currentPosition = position;
+            debugPrint('location generated @ $currentPosition');
+          });
+        }).catchError((e) {
+          debugPrint(e);
+        });
+      }
+    }
+
+    String message =
+        "This is a sample distress message from Kaustubh at location ${currentPosition?.latitude}, ${currentPosition?.longitude}";
 
     List<String> recipents = [
       "9922450488",
@@ -36,21 +57,27 @@ class _HomePageState extends State<HomePage> {
               child: InkWell(
                   splashColor: Colors.white,
                   onTap: () async {
-                    if (await Permission.sms.isGranted) {
+                    if (await Permission.sms.isGranted &&
+                        await Permission.location.isGranted) {
                       //smsFunction(message: message, number: recipents);
+                      getCurrentLocation();
                       SmsStatus result = await BackgroundSms.sendMessage(
-                          phoneNumber: recipents[2], message: message);
+                          phoneNumber: recipents[3], message: message);
                       if (result == SmsStatus.sent) {
                         print('object send');
                       } else {
                         print('error');
                       }
                     } else {
-                      final status = await Permission.sms.request();
-                      if (status.isGranted) {
+                      final smsStatus = await Permission.sms.request();
+                      final locationStatus =
+                          await Permission.location.request();
+                      await Permission.location.request();
+                      if (smsStatus.isGranted && locationStatus.isGranted) {
                         //smsFunction(message: message, number: recipents);
+                        getCurrentLocation();
                         SmsStatus result = await BackgroundSms.sendMessage(
-                            phoneNumber: recipents[1], message: message);
+                            phoneNumber: recipents[3], message: message);
                         if (result == SmsStatus.sent) {
                           print('object send');
                         } else {
