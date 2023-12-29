@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
                       await Permission.location.request();
                       if (smsStatus.isGranted && locationStatus.isGranted) {
                         getCurrentLocation();
+                        makeCall();
                       }
                     }
                   },
