@@ -16,6 +16,7 @@ smsFunction(Position position) async {
           "This is a sample distress message from Kaustubh at location ${position.latitude}, ${position.longitude}");
   if (result == SmsStatus.sent) {
     debugPrint('object send');
+    makeCall();
   } else {
     debugPrint('error');
   }
