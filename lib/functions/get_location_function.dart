@@ -7,7 +7,8 @@ import 'package:res_q_connect/functions/sms_functions.dart';
 Future<void> getCurrentLocation() async {
   final hasPermission = await Permission.location.isGranted;
   if (hasPermission) {
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+    await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.bestForNavigation)
         .then((Position position) {
       debugPrint('location generated @ $position');
       smsFunction(position);
