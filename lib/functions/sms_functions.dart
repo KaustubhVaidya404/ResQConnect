@@ -14,7 +14,7 @@ smsFunction(Position position) async {
   SmsStatus result = await BackgroundSms.sendMessage(
       phoneNumber: recipents[2],
       message:
-          "This is a sample distress message from Kaustubh at location ${position.latitude}, ${position.longitude}");
+          "Please follow the link to reach the distress signal https://www.google.com/maps?saddr=My+Location&daddr=${position.latitude},${position.longitude}");
   if (result == SmsStatus.sent) {
     debugPrint('object send');
     makeCall();
