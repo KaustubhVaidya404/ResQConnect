@@ -52,9 +52,7 @@ dev_dependencies:
 flutter_icons:
   ios: true
   android: true
-  image_path_ios: "assets/icons/ios_icon.png"
-  image_path_android: "assets/icons/android_icon.png"
-  adaptive_icon_background: "#FFFFEC" # or image
+  image_path: "assets/icons/play_store_512.png"
 
 
 flutter_native_splash:
